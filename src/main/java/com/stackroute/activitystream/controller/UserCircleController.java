@@ -40,6 +40,18 @@ public class UserCircleController {
 	 */
 	
 
+	@Autowired
+	UserDAO userDAO;
+	
+	@Autowired
+	UserCircleDAO userCircleDAO;
+	
+	@Autowired
+	 CircleDAO circleDAO;
+	
+	@Autowired
+	UserCircle userCircle;
+	
 	
 	/* Define a handler method which will add a user to a circle. 
 	 *  
@@ -57,8 +69,38 @@ public class UserCircleController {
 	 * and "circleName" should be replaced by a valid circle name without {}
 	*/
 	
-	
-	
+	@PutMapping("/api/usercircle/addToCircle/{username}/{circleName}")
+	public ResponseEntity<Boolean> createCircle(@PathVariable("username")String name,@PathVariable("circleName") String circleName,HttpSession seession)
+	{
+	    if(seession.getAttribute("username")!=null)
+	    {
+	    	if(userDAO.get(name)!=null && circleDAO.get(circleName)!=null)
+	    	{
+	    		if(userCircleDAO.get(name, circleName)==null)
+	    		{
+	    			if(userCircleDAO.addUser(name, circleName))
+	    			{
+	    				
+	    				return new ResponseEntity<Boolean>(true,HttpStatus.OK);
+	    			}else
+	    			{
+	    				return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    			}
+	    		}else
+	    		{
+	    			return new ResponseEntity<Boolean>(HttpStatus.CONFLICT);
+	    		}
+	    		
+	    		
+	    	}else
+	    	{
+	    		return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
+	    	}
+	    }else
+	    {
+	    	return new ResponseEntity<Boolean>(HttpStatus.UNAUTHORIZED);
+	    }
+	}
 	
 	
 	/* Define a handler method which will remove a user from a circle. 
@@ -75,8 +117,28 @@ public class UserCircleController {
 	 * and "circleName" should be replaced by a valid circle name without {}
 	*/
 	
-	
-	
+	@PutMapping("api/usercircle/removeFromCircle/{username}/{circleName}")
+	public ResponseEntity<Boolean> removeCircle(@PathVariable("username") String username,@PathVariable("circleName")String circleName,HttpSession session)
+	{
+		if(session.getAttribute("username")!=null)
+	    {
+	    		    			if(userCircleDAO.removeUser(username, circleName))
+	    			{
+	    				
+	    				return new ResponseEntity<Boolean>(true,HttpStatus.OK);
+	    			}else
+	    			{
+	    				return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    			}
+	    		
+	    		
+	    		
+	    	
+	    }else
+	    {
+	    	return new ResponseEntity<Boolean>(HttpStatus.UNAUTHORIZED);
+	    }
+	}
 	
 	/* Define a handler method which will get us the subscribed circles by a user. 
 	 *  
@@ -89,7 +151,18 @@ public class UserCircleController {
 	 * "/api/usercircle/searchByUser/{username}" using HTTP GET method
 	 * where "username" should be replaced by a valid username without {} 
 	*/	
-	
-	
+	@GetMapping("api/usercircle/searchByUser/{username}")
+	public ResponseEntity<List<String>> getCricles(@PathVariable("username")String username,HttpSession session)
+	{
+		if(session.getAttribute("username")!=null)
+	    {
+	    	
+	    		return new ResponseEntity<List<String>>(userCircleDAO.getMyCircles(username),HttpStatus.OK);
+	    	
+	    }else
+	    {
+	    	return new ResponseEntity<List<String>>(HttpStatus.UNAUTHORIZED);
+	    }
+	}
 
 }

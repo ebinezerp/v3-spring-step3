@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.stackroute.activitystream.dao.CircleDAO;
 import com.stackroute.activitystream.dao.UserDAO;
 import com.stackroute.activitystream.model.Circle;
+import com.stackroute.activitystream.model.UserCircle;
 
 /*
 * This class is implementing the CircleDAO interface. This class has to be annotated with 
@@ -23,25 +24,44 @@ import com.stackroute.activitystream.model.Circle;
 * 					transaction. The database transaction happens inside the scope of a persistence 
 * 					context.  
 * */
-
+@Transactional
+@Repository("circleDAO")
 public class CircleDAOImpl implements CircleDAO {
 
 	/*
-	 * Autowiring should be implemented for the SessionFactory. 
+	 * Autowiring should be implemented for the SessionFactory.
 	 */
-	
-	/*
-	 * Autowiring should be implemented for UserDAO. 
-	 */
-	
 
-		
+	@Autowired
+	SessionFactory sessionFactory;
+
+	/*
+	 * Autowiring should be implemented for UserDAO.
+	 */
+
+	@Autowired
+	UserDAO userDAO;
+
 	/*
 	 * Create a new circle
 	 */
 	public boolean save(Circle circle) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+
+			if (userDAO.get(circle.getCreatorId()) != null) {
+
+				sessionFactory.getCurrentSession().save(circle);
+
+				return true;
+			} else {
+				return false;
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
 	}
 
 	/*
@@ -49,45 +69,76 @@ public class CircleDAOImpl implements CircleDAO {
 	 */
 	public boolean update(Circle circle) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+			sessionFactory.getCurrentSession().update(circle);
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+
+		}
 	}
 
-	
 	/*
 	 * delete an existing circle
 	 */
 	public boolean delete(Circle circle) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+			sessionFactory.getCurrentSession().delete(circle);
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
 	}
-
 
 	/*
 	 * Retrieve a specific circle
 	 */
 	public Circle get(String circleName) {
 		// TODO Auto-generated method stub
-		return null;
+		try {
+			Circle circle = sessionFactory.getCurrentSession().createQuery("From Circle where circleName=:circleName",Circle.class)
+					.setParameter("circleName", circleName)
+					.getSingleResult();
+
+			return circle;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
 
 	}
-	
+
 	/*
 	 * retrieving all circles
 	 */
 	public List<Circle> getAllCircles() {
 		// TODO Auto-generated method stub
-		return null;
+		try {
+			return sessionFactory.getCurrentSession().createQuery("From Circle", Circle.class).getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
 	}
 
-	
 	/*
 	 * Retrieving all circles that matches a search string
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Circle> getAllCircles(String searchString) {
 		// TODO Auto-generated method stub
+		try {
+			return sessionFactory.getCurrentSession()
+					.createQuery("From Circle where circlename like :searchstring", Circle.class)
+					.setParameter("searchstring", searchString).getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return null;
 
-	}	
+	}
 
 }

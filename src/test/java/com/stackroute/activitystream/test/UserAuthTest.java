@@ -33,11 +33,11 @@ import com.stackroute.activitystream.model.User;
 @ContextConfiguration(classes = { ApplicationContextConfig.class })
 public class UserAuthTest {
 
-	@Autowired
+	/*@Autowired
 	private MessageDAO messageDAO;
 
 	@Autowired
-	private Message message;
+	private Message message;*/
 
 	@Autowired
 	private UserDAO userDAO;

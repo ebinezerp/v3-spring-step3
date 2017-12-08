@@ -67,6 +67,12 @@ public class CircleTest {
 
 	}
 
+	@Test
+	public void test()
+	{
+		
+	}
+	
 	@After
 	public void teardown() {
 		if (userDAO.get("john") != null) {
@@ -87,6 +93,7 @@ public class CircleTest {
 		circleDAO.save(circle);
 		assertNotNull("Creating of circle failed.", circleDAO.get("Angular"));
 		circleDAO.delete(circle);
+		
 	}
 
 	@Test

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * any Java objects annotated with the @Entity annotation. If it finds any, then it will begin the 
  * process of looking through that particular Java object to recreate it as a table in your database.
  */
-
+@Entity
 public class UserTag {
 	
 	/*
@@ -23,6 +23,45 @@ public class UserTag {
 	 * field userTagId should be the primary key and should be generated. This class 
 	 * should also contain the getters and setters for the fields. 
 	 */
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int userTagId;
+	
+	private String username;
+	
+	
+	private String tag;
+
+
+	public int getUserTagId() {
+		return userTagId;
+	}
+
+
+	public void setUserTagId(int userTagId) {
+		this.userTagId = userTagId;
+	}
+
+
+	public String getUsername() {
+		return username;
+	}
+
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+	public String getTag() {
+		return tag;
+	}
+
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	
 	
 	
 

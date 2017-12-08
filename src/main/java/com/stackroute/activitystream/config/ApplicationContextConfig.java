@@ -1,5 +1,20 @@
 package com.stackroute.activitystream.config;
 
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
 /*This class will contain the application-context for the application. 
  * Define the following annotations:
  * @Configuration - Annotating a class with the @Configuration indicates that the 
@@ -13,6 +28,10 @@ package com.stackroute.activitystream.config;
  * 
  * */
 
+@EnableWebMvc
+@Configuration
+@ComponentScan("com.stackroute.activitystream")
+@EnableTransactionManagement
 public class ApplicationContextConfig {
 
 	/*
@@ -22,7 +41,18 @@ public class ApplicationContextConfig {
 	 * 2. Database URL
 	 * 3. Username
 	 * 4. Password
-	 */
+	 */@Bean
+		public DataSource getDataSource()
+		{
+			BasicDataSource dataSource=new BasicDataSource();
+			dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+			dataSource.setUrl("jdbc:mysql://localhost:3306/activity3");
+			dataSource.setUsername("root");
+			dataSource.setPassword("root");
+			return dataSource;
+		}
+		
+		
 	
 	
 	
@@ -31,7 +61,26 @@ public class ApplicationContextConfig {
 	 * through which we get sessions and perform database operations. 
 	 */
 	
-	
+	 @Bean
+		public SessionFactory getSessionFactory(DataSource dataSource)
+		{
+			LocalSessionFactoryBuilder sessionFactoryBuilder=new LocalSessionFactoryBuilder(dataSource);
+			sessionFactoryBuilder.scanPackages("com.stackroute.activitystream");
+			sessionFactoryBuilder.addProperties(getProperties());
+			return sessionFactoryBuilder.buildSessionFactory();
+		}
+		
+		public Properties getProperties()
+		{
+			Properties properties=new Properties();
+			properties.setProperty("hibernate.dialect","org.hibernate.dialect.MySQL5Dialect");
+			properties.setProperty("hibernate.format_sql", "true");
+			properties.setProperty("hibernate.hbm2ddl.auto", "update");
+			properties.setProperty("hibernate.show_sql","true");
+			return properties;
+		}
+
+		
 	
 	/*
 	 * Define the bean for Transaction Manager. HibernateTransactionManager handles transaction 
@@ -40,6 +89,14 @@ public class ApplicationContextConfig {
 	 * plain JDBC too. HibernateTransactionManager allows bulk update and bulk insert and ensures 
 	 * data integrity.   
 	 */
+		@Bean
+		public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory)
+		{
+			return new HibernateTransactionManager(sessionFactory);
+		}
+		
+		
+		
 	
 
 }

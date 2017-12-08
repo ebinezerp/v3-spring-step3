@@ -115,6 +115,7 @@ public class CircleControllerTest {
 		
 		Circle newCircle=new Circle("Spring", null, null);
 		when(circleDAO.save(any())).thenReturn(true);
+		
         circleMockMvc.perform(post("/api/circle")
         		 .contentType(MediaType.APPLICATION_JSON)
                  .content(asJsonString(newCircle))

@@ -30,7 +30,7 @@ import com.stackroute.activitystream.model.User;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @Transactional
-@ContextConfiguration(classes = { ApplicationContextConfig.class })
+@ContextConfiguration(classes = {ApplicationContextConfig.class })
 public class UserTest {
 
 	@Autowired

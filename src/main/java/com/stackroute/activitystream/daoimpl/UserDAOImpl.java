@@ -28,14 +28,21 @@ public class UserDAOImpl implements UserDAO{
 	 * Autowiring should be implemented for the SessionFactory. 
 	 */
 	
-
+@Autowired
+private SessionFactory sessionFactory;
 	
 	/*
 	 * Create a new user 
 	 */
 	public boolean save(User user) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+			sessionFactory.getCurrentSession().save(user);
+			return true;
+		}catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	/*
@@ -43,7 +50,13 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public boolean update(User user) {
 		// TODO Auto-generated method stub
-		return false;
+		try {
+			sessionFactory.getCurrentSession().update(user);
+			return true;
+		}catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	
@@ -52,7 +65,13 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public boolean delete(User user) {
 		// TODO Auto-generated method stub
+		try {
+			sessionFactory.getCurrentSession().delete(user);
+			return true;
+		}catch(Exception e)
+		{
 		return false;
+		}
 	}
 
 	/*
@@ -60,7 +79,13 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public List<User> list() {
 		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+		return	sessionFactory.getCurrentSession().createQuery("From User",User.class).getResultList();
+		}catch(Exception e)
+		{
+			return null;
+		}
 	}
 
 	/*
@@ -68,7 +93,17 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public boolean validate(String id, String password) {
 		// TODO Auto-generated method stub
-		return false;
+		try
+		{
+			sessionFactory.getCurrentSession().createQuery("From User where username=:id and password=:password",User.class)
+			.setParameter("id", id)
+			.setParameter("password", password)
+			.getSingleResult();
+			return true;
+		}catch(Exception e)
+		{
+			return false;
+		}
 	
 	}
 
@@ -77,7 +112,15 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public User get(String id) {
 		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+			return sessionFactory.getCurrentSession().createQuery("From User where username=:id",User.class)
+					.setParameter("id", id)
+					.getSingleResult();
+		}catch(Exception e)
+		{
+			return null;
+		}
 			
 	}
 	/*
@@ -85,7 +128,16 @@ public class UserDAOImpl implements UserDAO{
 	 */
 	public boolean exists(String id) {
 		// TODO Auto-generated method stub
-		return false;
+		try
+		{
+			sessionFactory.getCurrentSession().createQuery("From User where username=:id",User.class)
+			.setParameter("id", id)
+			.getSingleResult();
+			return true;
+		}catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 }

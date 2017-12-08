@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
  * process of looking through that particular Java object to recreate it as a table in your database.
  */
 
+@Component
+@Entity
 public class UserCircle {
 
 	/*
@@ -25,8 +27,54 @@ public class UserCircle {
 	 * should also contain the getters and setters for the fields. 
 	 */
 	
-	public UserCircle(String string, String string2) {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int userCircleId;
+	private String username;
+	private String circleName;
+	
+	
+	public UserCircle()
+	{
+		
+	}
+
+
+	public int getUserCircleId() {
+		return userCircleId;
+	}
+
+
+	public void setUserCircleId(int userCircleId) {
+		this.userCircleId = userCircleId;
+	}
+
+
+	public String getUsername() {
+		return username;
+	}
+
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+	public String getCircleName() {
+		return circleName;
+	}
+
+
+	public void setCircleName(String circleName) {
+		this.circleName = circleName;
+	}
+
+
+	public UserCircle(String username, String circleName) {
 		// TODO Auto-generated constructor stub
+		
+		this.username=username;
+		this.circleName=circleName;
 	}
 
 	

@@ -117,7 +117,7 @@ public class MessageTest {
 		}
 	}
 
-	@Test
+/*	@Test
 	public void testSendMessageToCircle() {
 		message.setMessage("Sample Message");
 		message.setStreamType("text");
@@ -142,7 +142,7 @@ public class MessageTest {
 		message.setSenderName("john");
 		assertEquals("Sending message to Circle failed",false,messageDAO.sendMessageToCircle("Angular", message));
 		//messageDAO.removeMessage(message);
-	}
+	}*/
 	
 	@Test
 	public void testSendMessageToUser() {
@@ -153,7 +153,7 @@ public class MessageTest {
 		assertEquals("Sending message to Circle failed",true,messageDAO.sendMessageToUser("will", message));
 		//messageDAO.removeMessage(message);
 	}
-	
+	/*
 	@Test
 	public void testSendMessageToInvalidSenderFailure() {
 		message.setMessage("Sample Message");
@@ -170,7 +170,7 @@ public class MessageTest {
 		message.setSenderName("john");
 		assertEquals("Sending message to Circle failed",false,messageDAO.sendMessageToUser("chris", message));
 		
-	}
+	}*/
 	
 	
 	

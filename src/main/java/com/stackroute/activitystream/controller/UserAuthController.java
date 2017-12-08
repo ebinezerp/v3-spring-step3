@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,8 +32,10 @@ public class UserAuthController {
 	 * we should not create any object using the new keyword 
 	 */
 	
+	@Autowired
+	UserDAO userDAO;
 	
-	
+
 
 	/* Define a handler method which will authenticate a user by reading the Serialized user
 	 * object from request body containing the username and password and validating the same. Post login, the 
@@ -45,7 +48,24 @@ public class UserAuthController {
 	 * 
 	 * This handler method should map to the URL "/api/authenticate" using HTTP POST method
 	*/
-
+	
+	@PostMapping("/api/authenticate")
+	public ResponseEntity<User> login(@RequestBody User user,HttpSession session)
+	{
+		 boolean auth=userDAO.validate(user.getUsername(), user.getPassword());
+		
+		 
+		 if(auth)
+		 {
+			 user=userDAO.get(user.getUsername());
+			 session.setAttribute("username", user.getUsername());
+			return new ResponseEntity<User>(user,HttpStatus.OK);
+		 }
+		 else
+		 {
+			 return new ResponseEntity<User>(user,HttpStatus.UNAUTHORIZED);
+		 }
+	}
 	
 	
 
@@ -58,6 +78,21 @@ public class UserAuthController {
 	 * This handler method should map to the URL "/api/logout" using HTTP PUT method
 	*/ 
 	
-
+	@PutMapping("/api/logout")
+	public ResponseEntity<User> logout(HttpSession session)
+	{
+		String username=(String)session.getAttribute("username");
+		User user=userDAO.get(username);
+		if(user!=null)
+		{
+			session.removeAttribute("username");
+			session.invalidate();
+			return new ResponseEntity<User>(user,HttpStatus.OK);
+		}else
+		{
+			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 
 }

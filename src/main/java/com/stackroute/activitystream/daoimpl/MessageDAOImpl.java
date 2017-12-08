@@ -40,15 +40,23 @@ public class MessageDAOImpl implements MessageDAO {
 	 * Autowiring should be implemented for the SessionFactory. 
 	 */
 	
+	@Autowired
+	SessionFactory sessionFactory;
 
 	/*
 	 * Autowiring should be implemented for CircleDAO 
 	 */
 	
+	@Autowired
+	CircleDAO circleDAO;
 	
 	/*
 	 * Autowiring should be implemented for UserDAO. 
 	 */
+	
+	
+	@Autowired
+	UserDAO userDAO;
 	
 	
 	/*
@@ -56,13 +64,27 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	
 
+	   @Autowired
+	   UserCircleDAO userCircleDAO;
+	
 	/*
 	 * Retrieve messages from a specific circle. For improved performace, we will
 	 * implement retrieving the messages partially by implementing pagination
 	 */
 	public List<Message> getMessagesFromCircle(String circleName, int pageNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		   if(circleDAO.get(circleName)!=null)
+		   {
+			   return sessionFactory.getCurrentSession().createQuery("From Message where circleName=:circleName",Message.class)
+					   .setParameter("circleName", circleName)
+					   .setFetchSize(10)
+					   .setFirstResult((pageNumber-1)*10)
+					   .getResultList();
+			   
+		   }else
+		   {
+			   return null;
+		   }
 	}
 
 	/*
@@ -99,7 +121,14 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	public boolean sendMessageToUser(String username, Message message) {
 		// TODO Auto-generated method stub
-		return false;
+		if(userDAO.get(username)!=null)
+		{
+			sessionFactory.getCurrentSession().save(message);
+			return true;
+		}else
+		{
+			return false;
+		}
 	}
 
 
