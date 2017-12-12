@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +28,7 @@ import com.stackroute.activitystream.model.UserTag;
  * format. Starting from Spring 4 and above, we can use @RestController annotation which 
  * is equivalent to using @Controller and @ResposeBody annotation
  */
-
+@RestController
 public class MessageController {
 
 	/*
@@ -54,6 +55,13 @@ public class MessageController {
 	 * we should not create any object using the new keyword
 	 * */
 	
+	@Autowired
+	MessageDAO messageDAO;
+	
+	/*@Autowired
+	UserTag userTag;*/
+	
+	
 	
 	
 	/* Define a handler method which will send a message to a circle by reading the Serialized message
@@ -70,6 +78,24 @@ public class MessageController {
 	*/
 	
 	
+	@PostMapping("/api/message/sendMessageToCircle/{circleName}")
+	public ResponseEntity<Message> sendMessageToCircle(@ModelAttribute("message")Message message,@PathVariable("circleName")String circleName,HttpSession session)
+	{
+		if(session.getAttribute("username")!=null)
+		{
+			boolean result=messageDAO.sendMessageToCircle(circleName, message);
+			if(result)
+			{
+				return new ResponseEntity<Message>(message,HttpStatus.OK);
+			}else
+			{
+				return new ResponseEntity<Message>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}else
+		{
+			return new ResponseEntity<Message>(HttpStatus.UNAUTHORIZED);
+		}
+	}
 	
 	/* Define a handler method which will send a message to an individual user by reading the Serialized message
 	 * object from request body and save the message in message table in database. Please 
@@ -85,7 +111,23 @@ public class MessageController {
 	*/
 	
 	
-	
+	 @PostMapping("/api/message/sendMessageToUser/{receiverId}")
+	 public ResponseEntity<Message> sendMessageToUser(@ModelAttribute("message") Message message,@PathVariable("receiverId")String receiverId,HttpSession session)
+	 {
+		 if(session.getAttribute("username")!=null)
+		 {
+			 if(messageDAO.sendMessageToUser(receiverId, message))
+			 {
+				 return new ResponseEntity<Message>(message,HttpStatus.OK);
+			 }else
+			 {
+				 return new ResponseEntity<Message>(HttpStatus.INTERNAL_SERVER_ERROR);
+			 }
+		 }else
+		 {
+			 return new ResponseEntity<Message>(HttpStatus.UNAUTHORIZED);
+		 }
+	 }
 	
 	/* Define a handler method which will get all messages sent by a specific user to another specific user. Please 
 	 * note that there can be huge number of messages which has been transmitted between two users. Hence, retrieving
@@ -102,8 +144,21 @@ public class MessageController {
 	 * and "receiverUsername" should be replaced by a valid user name without {}
 	 * and "pageNumber" should be replaced by the numeric page number that we are looking for without {}
 	*/
-	
-	
+	@GetMapping("/api/message/getMessagesByUser/{senderUsername}/{receiverUserName}/{pageNumber}")
+	public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable("senderUsername")String senderUsername,@PathVariable("receiverUserName")String receiverUserName,@PathVariable("pageNumber")int pageNumber,HttpSession session)
+	{
+		if(session.getAttribute("username")!=null)
+		{
+			
+			List<Message> messages=messageDAO.getMessagesFromUser(senderUsername, receiverUserName, pageNumber);
+			
+			System.out.println(messages);
+			return new ResponseEntity<List<Message>>(messages,HttpStatus.OK);
+		}else
+		{
+			return new ResponseEntity<List<Message>>(HttpStatus.UNAUTHORIZED);
+		}
+	}
 	
 	
 	/* Define a handler method which will get all messages sent to a specific circle by all users. Please 

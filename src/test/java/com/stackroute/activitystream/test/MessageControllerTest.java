@@ -313,7 +313,7 @@ public class MessageControllerTest {
     }
 	
 	
-	@Test
+	/*@Test
     public void testGetMessagesByUserFailure() throws Exception {
 		
 		User user=new User("john","","password");
@@ -763,10 +763,10 @@ public class MessageControllerTest {
                 
         verify(messageDAO, times(0)).listMyTags(anyString());
     }
+	*/
 	
-	/*
-     * converts a Java object into JSON representation
-     */
+     //* converts a Java object into JSON representation
+     
     public static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

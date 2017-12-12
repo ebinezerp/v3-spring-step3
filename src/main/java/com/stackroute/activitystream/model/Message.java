@@ -35,6 +35,7 @@ public class Message {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int messageId;
 	
+
 	
 	private String senderName;
 	

@@ -95,7 +95,25 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	public List<Message> getMessagesFromUser(String username, String otherUsername, int pageNumber) {
 		// TODO Auto-generated method stub
-		return null;
+		  if(userDAO.get(username)!=null && userDAO.get(otherUsername)!=null)
+		   {
+			  try {
+			   return sessionFactory.getCurrentSession().createQuery("From Message where senderName=:senderName and receiverId=:receiverId",Message.class)
+					   .setParameter("senderName", username)
+					   .setParameter("receiverId", otherUsername)
+					   .setFetchSize(10)
+					   .setFirstResult((pageNumber-1)*10)
+					   .getResultList();
+			  }catch (Exception e) {
+				// TODO: handle exception
+				  System.out.println(e);
+				  return null;
+			}
+			   
+		   }else
+		   {
+			   return null;
+		   }
 	}
 	/*
 	 * Retrieve messages from all circles subscribed by a specific user. For improved 
@@ -112,7 +130,21 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	public boolean sendMessageToCircle(String circleName, Message message) {
 		// TODO Auto-generated method stub
-		return false;
+		try
+		{
+			if(circleDAO.get(circleName)!=null && userDAO.get(message.getSenderName())!=null)
+			{
+				sessionFactory.getCurrentSession().save(message);
+				return true;
+			}else
+			{
+				return false;
+			}
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
 		
 	}
 
@@ -121,7 +153,7 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	public boolean sendMessageToUser(String username, Message message) {
 		// TODO Auto-generated method stub
-		if(userDAO.get(username)!=null)
+		if(userDAO.get(username)!=null && userDAO.get(message.getSenderName())!=null)
 		{
 			sessionFactory.getCurrentSession().save(message);
 			return true;
