@@ -43,6 +43,9 @@ public class UserController {
 	@Autowired
 	UserDAO userDAO;
 	
+	@Autowired
+	HttpSession session;
+	
   
 	/* Define a handler method which will list all the available users.
 	 * This handler method should return any one of the status messages basis on different
@@ -54,7 +57,7 @@ public class UserController {
 	*/
 
 	@GetMapping("/api/user")
-	public ResponseEntity<List<User>> usersList(HttpSession session)
+	public ResponseEntity<List<User>> usersList()
 	{
 		if(session.getAttribute("username")!=null)
 		{
@@ -78,7 +81,7 @@ public class UserController {
 	 * where "username" should be replaced by a username without {}
 	*/
 	@GetMapping("/api/user/{username}")
-	public ResponseEntity<User> aSpecifiedUser(@PathVariable("username") String username,HttpSession session)
+	public ResponseEntity<User> aSpecifiedUser(@PathVariable("username") String username)
 	{
 		System.out.println("entered");
 		System.out.println(username);
@@ -142,7 +145,7 @@ public class UserController {
 	*/
 	
 	@PutMapping("/api/user/{username}")
-	public ResponseEntity<User> updateUser(@PathVariable("username") String username,@RequestBody User user,HttpSession session)
+	public ResponseEntity<User> updateUser(@PathVariable("username") String username,@RequestBody User user)
 	{
 		if(session.getAttribute("username")!=null && !((String)session.getAttribute("username")).equals("username"))
 		{
